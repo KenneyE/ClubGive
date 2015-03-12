@@ -5,16 +5,49 @@
   <%= stylesheet_link_tag 'application' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
 </head>
 <body>
-  
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
+  <% if user_signed_in? %>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <li class="active"><%= link_to "RMI", :user %></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <%= current_user.email %> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><%= link_to "View Profile", :user %></li>
+              <li><%= link_to "Edit Profile", :edit_user_registration %></li>
+              <% if current_user.try(:admin?) %>
+              <li class="divider"></li>
+              <li><%= link_to "Add Admin", :new_admin %></li>
+              <li><%= link_to "Add Hospital", :new_hospital %></li>
+              <% end %>
 
-<%= yield %>
+              <li class="divider"></li>
+              <li><%= button_to "Sign Out", :destroy_user_session, method: :delete, class: "btn btn-link"%></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <% end %>
 
-</body>
-</html>
+    <div class="container-fluid">
+
+      <% unless flash[:errors].nil? %>
+      <% flash[:errors].each do | error | %>
+      <div class="alert alert-warning"><%= error %></div>
+      <% end %>
+      <% end %>
+
+      <% unless flash[:notices].nil? %>
+      <% flash[:notices].each do | notice | %>
+      <div class="alert alert-info"><%= notice %></div>
+      <% end %>
+      <% end %>
+      <%= yield %>
+    </div>
+
+  </body>
+  </html>
